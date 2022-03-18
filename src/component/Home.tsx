@@ -32,12 +32,11 @@ const Home: React.FC = () => {
 
     const [page, setPage] = useState<number>(0);
     const [post, setPost] = useState<InitPost[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
     const [totalElement, setTotalElement] = useState<number>(0);
 
     const [localPage, setLocalPage] = useState<number>(1);
     const rowsPerPage = 20;
-
+   
     useEffect(() => {
         const interval = setInterval(() => {
             setPage((data) => data + 1);
@@ -47,17 +46,15 @@ const Home: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        setLoading(true);
+        
         axios
             .get(`https://hn.algolia.com/api/v1/search_by_date?tags=story&page=${page}`)
             .then((res) => {
                 const posts = [...post, ...res.data.hits];
                 setPost(posts);
                 setTotalElement(posts.length);
-                setLoading(false);
             })
             .catch((e) => {
-                setLoading(false);
                 console.log(e);
             });
 
@@ -67,8 +64,8 @@ const Home: React.FC = () => {
         setLocalPage(newPage);
     };
 
-    const handleDetails = (data: InitPost) => {
-        navigate("/details", { state: { data } });
+    const handleDetails = (data: InitPost , index: number) => {
+        navigate("/details/"+index, { state: { data } });
     };
 
     return (
@@ -78,7 +75,7 @@ const Home: React.FC = () => {
                     Post Table
                 </Typography>
                 {
-                    loading ?
+                    (totalElement < 1)  ?
                         (
                             <Box>
                                 <CircularProgress size={30} />
@@ -111,10 +108,12 @@ const Home: React.FC = () => {
                                                     rowsPerPage * (localPage - 1),
                                                     rowsPerPage * (localPage - 1) + rowsPerPage
                                                 )
-                                                .map((row) => (
+                                                .map((row, index) => (
+                                                   
                                                     <TableRow
+                                                    
                                                         key={row.title}
-                                                        onClick={() => handleDetails(row)}
+                                                        onClick={() => handleDetails(row, index)}
                                                         style={{ cursor: "pointer" }}
                                                     >
                                                         {

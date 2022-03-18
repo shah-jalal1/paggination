@@ -15,11 +15,9 @@ function App() {
     <div >
       <BrowserRouter>
         <Stack direction="column" justifyContent="center" alignItems="center" my={5}>
-          <Link to='/'>Return Home</Link>
           <Routes>
-            <Route path="/*" element={<Navigate  to="/" />} />
             <Route path="/" element={<Home />} />
-            <Route path="/details" element={<Details/>} />
+            <Route path="/details/:index" element={<Details/>} />
           </Routes>
         </Stack>
       </BrowserRouter>
