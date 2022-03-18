@@ -2,10 +2,11 @@
 import { Box, CircularProgress, Container, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
+import { getPaginationData } from './api/pagginationData';
 
 
-interface InitPost {
+export interface InitPost {
     title: string;
     url: string;
     created_at: Date;
@@ -26,9 +27,7 @@ const columns: Column[] = [
 ];
 
 const Home: React.FC = () => {
-
-
-    let navigate = useNavigate();
+    const history = useHistory();
 
     const [page, setPage] = useState<number>(0);
     const [post, setPost] = useState<InitPost[]>([]);
@@ -36,7 +35,7 @@ const Home: React.FC = () => {
 
     const [localPage, setLocalPage] = useState<number>(1);
     const rowsPerPage = 20;
-   
+
     useEffect(() => {
         const interval = setInterval(() => {
             setPage((data) => data + 1);
@@ -46,17 +45,17 @@ const Home: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        
-        axios
-            .get(`https://hn.algolia.com/api/v1/search_by_date?tags=story&page=${page}`)
-            .then((res) => {
-                const posts = [...post, ...res.data.hits];
+        async function fetchData() {
+            try {
+                const data = await getPaginationData(page);
+                const posts = [...post, ...data.hits];
                 setPost(posts);
                 setTotalElement(posts.length);
-            })
-            .catch((e) => {
-                console.log(e);
-            });
+            } catch (e) {
+                console.error(e);
+            }
+        };
+        fetchData();
 
     }, [page]);
 
@@ -64,18 +63,17 @@ const Home: React.FC = () => {
         setLocalPage(newPage);
     };
 
-    const handleDetails = (data: InitPost , index: number) => {
-        navigate("/details/"+index, { state: { data } });
+    const handleDetails = (data: InitPost, index: number) => {
+        history.push("/details/" + index, data);
     };
-
     return (
-        <div>
-            <Container>
+        <div data-testid="home">
+            {/* <Container> */}
                 <Typography variant="h5" my={2} textAlign="center">
                     Post Table
                 </Typography>
                 {
-                    (totalElement < 1)  ?
+                    (totalElement < 1) ?
                         (
                             <Box>
                                 <CircularProgress size={30} />
@@ -109,9 +107,9 @@ const Home: React.FC = () => {
                                                     rowsPerPage * (localPage - 1) + rowsPerPage
                                                 )
                                                 .map((row, index) => (
-                                                   
+
                                                     <TableRow
-                                                    
+
                                                         key={row.title}
                                                         onClick={() => handleDetails(row, index)}
                                                         style={{ cursor: "pointer" }}
@@ -140,7 +138,7 @@ const Home: React.FC = () => {
                     page={localPage}
                     onChange={handlePageChange}
                 />
-            </Container>
+            {/* </Container> */}
         </div>
     );
 };

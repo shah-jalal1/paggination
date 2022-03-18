@@ -1,12 +1,12 @@
 import { Typography } from '@mui/material';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import { InitPost } from './Home';
 
-const Details = () => {
-    const { state } = useLocation();
-    console.log(state);
+const Details: React.FC = () => {
+    const {state} = useLocation<InitPost>();
     return (
-        <div>
+        <div data-testid="details" style={{ textAlign: "center" }}>
             <Typography variant="h5" my={2} textAlign="center">
                 Details JSON
             </Typography>
