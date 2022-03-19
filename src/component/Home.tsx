@@ -3,7 +3,7 @@ import { Box, CircularProgress, Container, Pagination, Paper, Table, TableBody, 
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { getPaginationData } from './api/pagginationData';
+import { getPaginationData } from './api/getData';
 
 
 export interface InitPost {
@@ -45,19 +45,19 @@ const Home: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        async function fetchData() {
-            try {
-                const data = await getPaginationData(page);
-                const posts = [...post, ...data.hits];
-                setPost(posts);
-                setTotalElement(posts.length);
-            } catch (e) {
-                console.error(e);
-            }
-        };
         fetchData();
-
     }, [page]);
+
+    const fetchData = async () =>{
+        try {
+            const data = await getPaginationData(page);
+            const posts = [...post, ...data.hits];
+            setPost(posts);
+            setTotalElement(posts.length);
+        } catch (e) {
+            console.error(e);
+        }
+    };
 
     const handlePageChange = (e: unknown, newPage: number) => {
         setLocalPage(newPage);

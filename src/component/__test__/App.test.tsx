@@ -12,6 +12,16 @@ describe("test react router", () => {
         expect(app).toBeInTheDocument();
     });
 
+    test("redirects to home page", () => {
+        const history = createMemoryHistory({ initialEntries: ["/"] });
+        render(
+            <Router history={history}>
+                <App />
+            </Router>
+        );
+        expect(history.location.pathname).toBe("/");
+    });
+    
     test("redirects to details page", () => {
         const history = createMemoryHistory({ initialEntries: ["/details/2"] });
         render(
