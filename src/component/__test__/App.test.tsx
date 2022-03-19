@@ -13,12 +13,12 @@ describe("test react router", () => {
     });
 
     test("redirects to details page", () => {
-        const history = createMemoryHistory({ initialEntries: ["/details/:index"] });
+        const history = createMemoryHistory({ initialEntries: ["/details/2"] });
         render(
             <Router history={history}>
                 <App />
             </Router>
         );
-        expect(history.location.pathname).toBe("/details/:index");
+        expect(history.location.pathname).toBe("/details/2");
     });
 });
